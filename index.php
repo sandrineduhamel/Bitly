@@ -1,14 +1,40 @@
 <?php
 
+if(isset($_GET['q'])){
+
+    $shortcut = htmlspecialchars($_GET['q']);
+
+    $bdd = new PDO('mysql:host=localhost;dbname=Bitly;charset=utf8','root','root');
+    $req = $bdd->prepare('SELECT COUNT(*) AS x FROM links WHERE shortcut = ?');
+
+    $req->execute(array($shortcut));
+
+    while($result = $req->fetch()){
+
+        if($result['x'] != 1){
+            header('location: ../?error=true&message=Adresse url non connue');
+            exit();
+        }
+    }
+    $req = $bdd->prepare('SELECT * FROM links WHERE shortcut = ?');
+    $req->execute(array($shortcut));
+
+    while($result = $req->fetch()){
+        header('location: '.$result['url']);
+        exit();
+    }
+
+}
+
 if(isset($_POST['url'])){
 
     //variable
     $url = $_POST['url'];
 
     //verification
-    if(filter_var($url, FILTER_VALIDATE_URL)){
+    if(!filter_var($url, FILTER_VALIDATE_URL)){
         //pas un lien
-        header('../?error=true&message=Adresse url non valide');
+        header('location: ../?error=true&message=Adresse url non valide');
         exit();
     }
     //raccourci (SHORTCUT)
@@ -21,8 +47,8 @@ if(isset($_POST['url'])){
 
     while($result = $req->fetch()){
 
-        if($result[x] !=0){
-            header('localhost: ../?error=true&message=Adresse déjà raccourcie');
+        if($result['x'] !=0){
+            header('location: ../?error=true&message=Adresse déjà raccourcie');
             exit();
         }
     }
@@ -73,7 +99,7 @@ if(isset($_POST['url'])){
 <div class="center">
                     <div id="result">
                     <b>URL RACCOURCI : </b>
-                            http://localhost/q=<?php echo htmlspecialchars($_GET['short']); ?>       
+                            http://localhost/?q=<?php echo htmlspecialchars($_GET['short']); ?>       
                     </div>
                 </div>
 
