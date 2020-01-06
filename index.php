@@ -12,7 +12,7 @@ if(isset($_GET['q'])){
     while($result = $req->fetch()){
 
         if($result['x'] != 1){
-            header('location: ../?error=true&message=Adresse url non connue');
+            header('location: index.php?error=true&message=Adresse url non connue');
             exit();
         }
     }
@@ -20,7 +20,7 @@ if(isset($_GET['q'])){
     $req->execute(array($shortcut));
 
     while($result = $req->fetch()){
-        header('location: '.$result['url']);
+        header('location: index.php'.$result['url']);
         exit();
     }
 
@@ -34,7 +34,7 @@ if(isset($_POST['url'])){
     //verification
     if(!filter_var($url, FILTER_VALIDATE_URL)){
         //pas un lien
-        header('location: ../?error=true&message=Adresse url non valide');
+        header('location: index.php?error=true&message=Adresse url non valide');
         exit();
     }
     //raccourci (SHORTCUT)
@@ -48,7 +48,7 @@ if(isset($_POST['url'])){
     while($result = $req->fetch()){
 
         if($result['x'] !=0){
-            header('location: ../?error=true&message=Adresse déjà raccourcie');
+            header('location: index.php?error=true&message=Adresse déjà raccourcie');
             exit();
         }
     }
@@ -56,7 +56,7 @@ if(isset($_POST['url'])){
     $req = $bdd->prepare('INSERT INTO links(url, shortcut) VALUES(?, ?)');
     $req->execute(array($url, $shortcut));
 
-    header('location: ../?short=' .$shortcut);
+    header('location: index.php?short=' .$shortcut);
     exit();
 }
 
@@ -81,7 +81,7 @@ if(isset($_POST['url'])){
             </header>
             <h1>Une url longue ? Raccourcissez-là</h1>
             <h2>Largement meilleur et plus court que les autres.</h2>
-            <form action="../" method="post">
+            <form action="" method="post">
             <input type="url" name="url" placeholder="Coller un lien">
             <input type="submit"  value="raccourcir">
             </form>
